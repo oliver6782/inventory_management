@@ -20,14 +20,15 @@ public class MedicationController {
     }
 
     @GetMapping
-    public List<Medication> getAllMedications() {
-        return medicationService.getAllMedications();
-        // limit jpa
+    public ResponseEntity<List<Medication>> getAllMedications(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(medicationService.getAllMedications(page, size));
     }
 
     @GetMapping("/{id}")
-    public Medication getMedicationById(@PathVariable int id) {
-        return medicationService.getMedicationById(id);
+    public ResponseEntity<Medication> getMedicationById(@PathVariable long id) {
+        return ResponseEntity.ok(medicationService.getMedicationById(id));
     }
 
     @PostMapping
@@ -41,7 +42,7 @@ public class MedicationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteMedication(@PathVariable int id) {
+    public ResponseEntity<Boolean> deleteMedication(@PathVariable long id) {
         return ResponseEntity.ok(medicationService.deleteMedication(id));
     }
 }

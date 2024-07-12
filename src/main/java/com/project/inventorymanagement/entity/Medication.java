@@ -1,6 +1,5 @@
 package com.project.inventorymanagement.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
