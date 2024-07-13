@@ -5,30 +5,37 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Medication {
-    private enum Types {PRES, OTC, OTHER}
+public class User {
+    public enum Roles {USER, ADMIN}
 
     @Id
     @GeneratedValue
     @Column
-    private Long id;
+    private Integer id;
 
     @Column
-    private String name;
+    private String username;
 
     @Column
-    private String description;
+    private String password;
+
+    @Column(unique = true)
+    private String email;
 
     @Column
-    private Integer quantity;
+    private Roles role;
 
     @Column
-    private Types type;
+    private Timestamp createdAt;
+
+    @Column
+    private Timestamp updatedAt;
 
 }
-
