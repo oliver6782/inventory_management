@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Medication {
-    private enum Types {PRES, OTC, OTHER}
+    public enum Types {PRES, OTC, OTHER}
 
     @Id
     @GeneratedValue

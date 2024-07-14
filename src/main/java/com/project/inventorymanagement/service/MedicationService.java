@@ -1,7 +1,9 @@
 package com.project.inventorymanagement.service;
 
+import com.project.inventorymanagement.dto.MedicationRequestDTO;
 import com.project.inventorymanagement.entity.Medication;
 import com.project.inventorymanagement.repository.MedicationRepository;
+import com.project.inventorymanagement.util.MedicationConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,43 +18,54 @@ import java.util.NoSuchElementException;
 @Service
 public class MedicationService {
 
-    final private MedicationRepository medicationRepository;
+    private final MedicationRepository medicationRepository;
+    private final MedicationConverter medicationConverter;
 
     @Autowired
-    public MedicationService(MedicationRepository medicationRepository) {
+    public MedicationService(MedicationRepository medicationRepository,
+                             MedicationConverter medicationConverter) {
         this.medicationRepository = medicationRepository;
+        this.medicationConverter = medicationConverter;
     }
 
-    @PreAuthorize("hasRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Medication> getAllMedications(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name"));
         Page<Medication> medicationsPage = medicationRepository.findAll(pageable);
         return medicationsPage.getContent();
     }
 
-    @PreAuthorize("hasRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Medication getMedicationById(long id) {
         return medicationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Medication not found with id " + id));
     }
 
-    @PreAuthorize("hasRole('USER', 'ADMIN')")
-    public Medication saveMedication(Medication medication) {
-        return medicationRepository.save(medication);
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Medication saveMedication(MedicationRequestDTO.AddMedicationDTO addMedicationDTO) {
+        return medicationRepository.save(medicationConverter.convertToMedication(addMedicationDTO));
     }
 
-    @PreAuthorize("hasRole('USER', 'ADMIN')")
-    public Medication updateMedication(Medication medication, long id) {
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Medication updateMedication(MedicationRequestDTO.UpdateMedicationDTO updateMedicationDTO, long id) {
         Medication medicationToUpdate = medicationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Medication not found with id " + id));
-        medicationToUpdate.setName(medication.getName());
-        medicationToUpdate.setQuantity(medication.getQuantity());
-        medicationToUpdate.setDescription(medication.getDescription());
-        medicationToUpdate.setType(medication.getType());
+        if (updateMedicationDTO.getName() != null) {
+            medicationToUpdate.setName(updateMedicationDTO.getName());
+        }
+        if (updateMedicationDTO.getDescription() != null) {
+            medicationToUpdate.setDescription(updateMedicationDTO.getDescription());
+        }
+        if (updateMedicationDTO.getQuantity() != null) {
+            medicationToUpdate.setQuantity(updateMedicationDTO.getQuantity());
+        }
+        if (updateMedicationDTO.getType() != null) {
+            medicationToUpdate.setType(updateMedicationDTO.getType());
+        }
         return medicationRepository.save(medicationToUpdate);
     }
 
-    @PreAuthorize("hasRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Boolean deleteMedication(long id) {
         Medication medicationToDelete = medicationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Medication not found with id " + id));
@@ -60,4 +73,3 @@ public class MedicationService {
         return true;
     }
 }
-

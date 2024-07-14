@@ -1,6 +1,6 @@
 package com.project.inventorymanagement.service;
 
-import com.project.inventorymanagement.dto.SignupRequest;
+import com.project.inventorymanagement.dto.UserRequestDTO;
 import com.project.inventorymanagement.entity.User;
 import com.project.inventorymanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -24,12 +25,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User signup(SignupRequest signupRequest) {
+    public User signup(UserRequestDTO.SignupRequestDTO signupRequestDTO) {
         User user = new User();
-        String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
-        user.setUsername(signupRequest.getUsername());
+        String encodedPassword = passwordEncoder.encode(signupRequestDTO.getPassword());
+        user.setUsername(signupRequestDTO.getUsername());
         user.setPassword(encodedPassword);
-        user.setEmail(signupRequest.getEmail());
+        user.setEmail(signupRequestDTO.getEmail());
         user.setRole(User.Roles.USER);
         user.setCreatedAt(Timestamp.from(Instant.now()));
         user.setUpdatedAt(Timestamp.from(Instant.now()));
@@ -52,8 +53,26 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public User updateUser(
+            UserRequestDTO.UpdateUserRequestDTO updateUserRequestDTO,
+            Integer id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (updateUserRequestDTO.getUsername() != null) {
+                user.setUsername(updateUserRequestDTO.getUsername());
+            }
+            if (updateUserRequestDTO.getEmail() != null) {
+                user.setEmail(updateUserRequestDTO.getEmail());
+            }
+            if (updateUserRequestDTO.getPassword() != null) {
+                String encodedPassword = passwordEncoder.encode(updateUserRequestDTO.getPassword());
+                user.setPassword(encodedPassword);
+            }
+            user.setUpdatedAt(Timestamp.from(Instant.now()));
+            return userRepository.save(user);
+        }
+        throw new RuntimeException("User not found with id " + id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
