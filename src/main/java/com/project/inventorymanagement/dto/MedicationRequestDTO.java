@@ -1,8 +1,13 @@
 package com.project.inventorymanagement.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.project.inventorymanagement.config.TypeEnumDeserializer;
 import com.project.inventorymanagement.entity.Medication;
 import com.project.inventorymanagement.validation.ValidEnum;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +34,7 @@ public class MedicationRequestDTO {
 
         @NotNull(message = "Type can not be null")
         @ValidEnum(enumClass = Medication.Types.class)
+        @JsonDeserialize(using = TypeEnumDeserializer.class)
         private Medication.Types type;
     }
 
@@ -48,6 +54,7 @@ public class MedicationRequestDTO {
 
         @NotNull(message = "Type can not be null")
         @ValidEnum(enumClass = Medication.Types.class)
+        @JsonDeserialize(using = TypeEnumDeserializer.class)
         private Medication.Types type;
     }
 

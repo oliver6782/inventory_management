@@ -2,6 +2,8 @@ package com.project.inventorymanagement.service;
 
 import com.project.inventorymanagement.dto.UserRequestDTO;
 import com.project.inventorymanagement.entity.User;
+import com.project.inventorymanagement.exception.IncorrectPasswordException;
+import com.project.inventorymanagement.exception.UserNotFoundException;
 import com.project.inventorymanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -39,17 +40,17 @@ public class UserService {
 
     public User login(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
         if (passwordEncoder.matches(password, user.getPassword())) {
             return user;
         }
-        throw new RuntimeException("Incorrect password");
+        throw new IncorrectPasswordException("Incorrect password");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public User getUserById(int id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -72,12 +73,14 @@ public class UserService {
             user.setUpdatedAt(Timestamp.from(Instant.now()));
             return userRepository.save(user);
         }
-        throw new RuntimeException("User not found with id " + id);
+        throw new UserNotFoundException("User not found");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public Boolean deleteUserById(int id) {
-        userRepository.deleteById(id);
+        User userToDelete = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User not found with id: " + id));
+        userRepository.delete(userToDelete);
         return true;
     }
 }

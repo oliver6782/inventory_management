@@ -1,5 +1,7 @@
 package com.project.inventorymanagement.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.project.inventorymanagement.config.RoleEnumDeserializer;
 import com.project.inventorymanagement.entity.User;
 import com.project.inventorymanagement.validation.ValidEnum;
 import com.project.inventorymanagement.validation.ValidPassword;
@@ -60,6 +62,7 @@ public class UserRequestDTO {
 
         @NotNull(message = "Role can not be null")
         @ValidEnum(enumClass = User.Roles.class)
+        @JsonDeserialize(using = RoleEnumDeserializer.class)
         private User.Roles role;
     }
 

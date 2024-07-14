@@ -2,6 +2,7 @@ package com.project.inventorymanagement.service;
 
 import com.project.inventorymanagement.dto.MedicationRequestDTO;
 import com.project.inventorymanagement.entity.Medication;
+import com.project.inventorymanagement.exception.MedicationNotFoundException;
 import com.project.inventorymanagement.repository.MedicationRepository;
 import com.project.inventorymanagement.util.MedicationConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class MedicationService {
@@ -38,7 +38,7 @@ public class MedicationService {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Medication getMedicationById(long id) {
         return medicationRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Medication not found with id " + id));
+                .orElseThrow(() -> new MedicationNotFoundException("Medication not found with id " + id));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -49,7 +49,7 @@ public class MedicationService {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Medication updateMedication(MedicationRequestDTO.UpdateMedicationDTO updateMedicationDTO, long id) {
         Medication medicationToUpdate = medicationRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Medication not found with id " + id));
+                .orElseThrow(() -> new MedicationNotFoundException("Medication not found with id " + id));
         if (updateMedicationDTO.getName() != null) {
             medicationToUpdate.setName(updateMedicationDTO.getName());
         }
@@ -68,7 +68,7 @@ public class MedicationService {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Boolean deleteMedication(long id) {
         Medication medicationToDelete = medicationRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Medication not found with id " + id));
+                .orElseThrow(() -> new MedicationNotFoundException("Medication not found with id " + id));
         medicationRepository.delete(medicationToDelete);
         return true;
     }
