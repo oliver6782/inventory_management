@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// wrap user request for easier maintenance
 @Data
 public class UserRequestDTO {
     @Data

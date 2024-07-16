@@ -15,13 +15,18 @@ public class Medication {
     @GeneratedValue
     @Column
     private Long id;
+
     @Column
     private String name;
+
     @Column
     private String description;
+
     @Column
     private Integer quantity;
+
     @Column
+    @Enumerated(EnumType.STRING)
     private Types type;
 
     public enum Types {PRES, OTC, OTHER}

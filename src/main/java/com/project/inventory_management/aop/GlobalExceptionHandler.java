@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -71,12 +72,13 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(IncorrectPasswordException.class)
-    public ResponseEntity<Map<String, String>> handleIncorrectPasswordException(
-           IncorrectPasswordException ex, WebRequest request) {
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, String>> handleAuthenticationException(
+            AuthenticationException ex,
+            WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         constructErrorMessages(ex, errors, request);
-        log.error("Incorrect password : {}", ex.getMessage());
+        log.error("User not exist or incorrect password : {}", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
     }
 

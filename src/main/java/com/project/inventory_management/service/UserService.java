@@ -1,13 +1,18 @@
 package com.project.inventory_management.service;
 
+import com.project.inventory_management.config.JwtService;
+import com.project.inventory_management.dto.AuthResponseDTO;
 import com.project.inventory_management.dto.UserRequestDTO;
+import com.project.inventory_management.dto.UserResponseDTO;
 import com.project.inventory_management.entity.User;
-import com.project.inventory_management.exception.IncorrectPasswordException;
 import com.project.inventory_management.exception.UserExistException;
 import com.project.inventory_management.exception.UserNotFoundException;
+import com.project.inventory_management.mapper.UserMapper;
 import com.project.inventory_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +25,24 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       UserMapper userMapper,
+                       JwtService jwtService,
+                       AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
-    public User signup(UserRequestDTO.SignupRequestDTO signupRequestDTO) {
+    public AuthResponseDTO signup(UserRequestDTO.SignupRequestDTO signupRequestDTO) {
         String signupEmail = signupRequestDTO.getEmail();
         Optional<User> existUser = userRepository.findByEmail(signupEmail);
         if (existUser.isPresent()) {
@@ -41,26 +56,38 @@ public class UserService {
         user.setRole(User.Roles.USER);
         user.setCreatedAt(Timestamp.from(Instant.now()));
         user.setUpdatedAt(Timestamp.from(Instant.now()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        String token = jwtService.generateToken(user);
+        return AuthResponseDTO
+                .builder()
+                .token(token)
+                .build();
     }
 
-    public User login(String email, String password) {
+    public AuthResponseDTO login(String email, String password) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        password
+                )
+        );
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            return user;
-        }
-        throw new IncorrectPasswordException("Incorrect password");
+                .orElseThrow();
+        String jwtToken = jwtService.generateToken(user);
+        return AuthResponseDTO.builder()
+                .token(jwtToken)
+                .build();
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public User getUserById(int id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+    public UserResponseDTO getUserById(int id) {
+        return userMapper.toUserResponseDTO(userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id)));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public User updateUser(
+    public UserResponseDTO updateUser(
             UserRequestDTO.UpdateUserRequestDTO updateUserRequestDTO,
             Integer id) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -77,7 +104,7 @@ public class UserService {
                 user.setPassword(encodedPassword);
             }
             user.setUpdatedAt(Timestamp.from(Instant.now()));
-            return userRepository.save(user);
+            return userMapper.toUserResponseDTO(userRepository.save(user));
         }
         throw new UserNotFoundException("User not found");
     }

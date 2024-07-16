@@ -7,7 +7,6 @@ import com.project.inventory_management.service.MedicationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +23,6 @@ public class MedicationController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<Medication>> getAllMedications(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
@@ -32,20 +30,17 @@ public class MedicationController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Medication> getMedicationById(@PathVariable long id) {
         return ResponseEntity.ok(medicationService.getMedicationById(id));
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Medication> addMedication(
             @Valid @RequestBody MedicationRequestDTO.AddMedicationDTO addMedicationDTO) {
         return ResponseEntity.ok(medicationService.saveMedication(addMedicationDTO));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Medication> updateMedication(
             @Valid @RequestBody MedicationRequestDTO.UpdateMedicationDTO updateMedicationDTO,
             @PathVariable long id) {
@@ -53,7 +48,6 @@ public class MedicationController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Boolean> deleteMedication(@PathVariable long id) {
         return ResponseEntity.ok(medicationService.deleteMedication(id));
     }

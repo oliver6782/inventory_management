@@ -20,7 +20,7 @@ target/
 *.iml
 *.ipr
 # Ignore log directory
-/logs/
+logs/
 
 ### NetBeans ###
 /nbproject/private/
