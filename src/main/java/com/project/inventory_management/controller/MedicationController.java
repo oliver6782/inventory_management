@@ -1,5 +1,6 @@
 package com.project.inventory_management.controller;
 
+import com.project.inventory_management.dto.FDADrugResponseDTO;
 import com.project.inventory_management.dto.MedicationRequestDTO;
 import com.project.inventory_management.entity.Medication;
 import com.project.inventory_management.exception.MedicationNotFoundException;
@@ -16,6 +17,7 @@ import java.util.List;
 public class MedicationController {
 
     private final MedicationService medicationService;
+
 
     @Autowired
     public MedicationController(MedicationService medicationService) {
@@ -55,5 +57,10 @@ public class MedicationController {
     @GetMapping("/medication-not-found")
     public MedicationNotFoundException medicationNotFound() {
         return new MedicationNotFoundException("Medication not found");
+    }
+
+    @GetMapping("/fetch-data/{drugName}")
+    public ResponseEntity<FDADrugResponseDTO> fetchMedicationInfo(@PathVariable String drugName) {
+        return ResponseEntity.ok(medicationService.fetchMedicationInfo(drugName));
     }
 }

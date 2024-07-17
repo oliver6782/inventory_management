@@ -112,6 +112,26 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UserUnauthorizedException.class)
+    public ResponseEntity<Map<String, String>> handleUserUnauthorizedException(
+            UserUnauthorizedException ex, WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        constructErrorMessages(ex, errors, request);
+        log.error("User is unauthorized exception : {}", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MedicationExistException.class)
+    public ResponseEntity<Map<String, String>> handleMedicationExistException(
+            MedicationExistException ex, WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        constructErrorMessages(ex, errors, request);
+        log.error("Medication already exists : {}", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
+    }
+
     public void constructErrorMessages(Exception ex,
                                        Map<String, String> errors,
                                        WebRequest request) {
