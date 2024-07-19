@@ -7,21 +7,16 @@ import com.project.inventory_management.dto.UserResponseDTO;
 import com.project.inventory_management.entity.User;
 import com.project.inventory_management.exception.UserExistException;
 import com.project.inventory_management.exception.UserNotFoundException;
-import com.project.inventory_management.exception.UserUnauthorizedException;
 import com.project.inventory_management.mapper.UserMapper;
 import com.project.inventory_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -114,13 +109,14 @@ public class UserService {
     public Boolean deleteUserById(int id) {
         User userToDelete = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User not found with id: " + id));
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        boolean isAdmin = authorities.stream()
-                        .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-        if (!isAdmin) {
-            throw new UserUnauthorizedException("User is not admin");
-        }
+        // already handled 401/403 in security config
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+//        boolean isAdmin = authorities.stream()
+//                        .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+//        if (!isAdmin) {
+//            throw new UnauthorizedException("User is not admin");
+//        }
         userRepository.delete(userToDelete);
         return true;
     }

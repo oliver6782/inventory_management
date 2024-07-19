@@ -16,7 +16,6 @@ public class FDAResponseErrorHandler extends DefaultResponseErrorHandler {
     public void handleError(ClientHttpResponse response) throws IOException {
         InputStream body = response.getBody();
         FDAErrorResponseDTO errorResponse = objectMapper.readValue(body, FDAErrorResponseDTO.class);
-        throw new FDAApiException(errorResponse.getError().getCode(), errorResponse.getError().getMessage());
+        throw new FDAApiException(errorResponse.getMessage()); // getError
     }
-
 }

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -71,17 +70,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, String>> handleAuthenticationException(
-            AuthenticationException ex,
-            WebRequest request) {
-        Map<String, String> errors = new HashMap<>();
-        constructErrorMessages(ex, errors, request);
-        log.error("User not exist or incorrect password : {}", ex.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MedicationTypeNotValidException.class)
     public ResponseEntity<Map<String, String>> handleMedicationTypeNotValidException(
@@ -112,16 +100,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(UserUnauthorizedException.class)
-    public ResponseEntity<Map<String, String>> handleUserUnauthorizedException(
-            UserUnauthorizedException ex, WebRequest request) {
-        Map<String, String> errors = new HashMap<>();
-        constructErrorMessages(ex, errors, request);
-        log.error("User is unauthorized exception : {}", ex.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MedicationExistException.class)
     public ResponseEntity<Map<String, String>> handleMedicationExistException(
@@ -129,7 +107,27 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         constructErrorMessages(ex, errors, request);
         log.error("Medication already exists : {}", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, String>> handleUnauthorizedException(
+            UnauthorizedException ex, WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        constructErrorMessages(ex, errors, request);
+        log.error("Unauthorized : {}", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<Map<String, String>> handleInsufficientStockException(
+            InsufficientStockException ex, WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        constructErrorMessages(ex, errors, request);
+        log.error("Insufficient stock : {}", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     public void constructErrorMessages(Exception ex,

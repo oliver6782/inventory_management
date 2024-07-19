@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 public class FDAApiException extends RuntimeException {
     private String code;
 
-    public FDAApiException(String message, String s) {
+    public FDAApiException(String message) {
         super(message);
     }
 

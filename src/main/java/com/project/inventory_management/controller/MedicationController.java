@@ -18,7 +18,6 @@ public class MedicationController {
 
     private final MedicationService medicationService;
 
-
     @Autowired
     public MedicationController(MedicationService medicationService) {
         this.medicationService = medicationService;

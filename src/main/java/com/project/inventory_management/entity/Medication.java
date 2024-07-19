@@ -10,26 +10,30 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SecondaryTable(name = "InboundTransactions")
 public class Medication {
     @Id
     @GeneratedValue
-    @Column
+    @Column(insertable = false, updatable = false)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private String description;
 
-    @Column
+    @Column(nullable = false)
     private Integer quantity;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Types type;
 
-    public enum Types {PRES, OTC, OTHER}
+
+    public enum Types {
+        PRES, OTC, OTHER
+    }
 
 }
 
