@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SecondaryTable(name = "InboundTransactions")
 public class Medication {
     @Id
     @GeneratedValue
