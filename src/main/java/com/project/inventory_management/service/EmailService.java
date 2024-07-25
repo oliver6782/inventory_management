@@ -16,8 +16,8 @@ import java.util.List;
 @Slf4j
 public class EmailService {
     private final JavaMailSender javaMailSender;
-    private static final String EMAIL_FROM = "xuoli6782@gmail.com";
-//    private static final String EMAIL_TO = "xuoli@foxmail.com";
+    private static final String EMAIL_FROM = "";
+//    private static final String EMAIL_TO = "";
 
     @Autowired
     public EmailService(JavaMailSender javaMailSender) {
