@@ -17,14 +17,22 @@ import java.util.List;
 @Component
 public abstract class InboundTransactionMapper {
 
+    protected MedicationRepository medicationRepository;
+
+    // using constructor injection in an abstract class
+    // might not work directly with MapStruct.
+    // Instead, you can use @Autowired on a setter method.
     @Autowired
-    private MedicationRepository medicationRepository;
+    public void setMedicationRepository(MedicationRepository medicationRepository) {
+        this.medicationRepository = medicationRepository;
+    }
 
     @Mapping(source = "medicationId", target = "medication", qualifiedByName = "mapMedicationIdToMedication")
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "supplier", target = "supplier")
     public abstract InboundTransaction toInboundTransaction(InboundTransactionDTO inboundTransactionDTO);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "medication.id", target = "medicationId")
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "supplier", target = "supplier")

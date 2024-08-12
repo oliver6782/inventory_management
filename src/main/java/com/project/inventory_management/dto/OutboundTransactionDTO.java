@@ -13,6 +13,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class OutboundTransactionDTO {
 
+    private Long id;
+
     @NotNull(message = "Medication ID can not be null")
     private Long medicationId;
 

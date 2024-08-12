@@ -17,14 +17,19 @@ import java.util.List;
 @Component
 public abstract class OutboundTransactionMapper {
 
+    protected MedicationRepository medicationRepository;
+
     @Autowired
-    MedicationRepository medicationRepository;
+    public void setMedicationRepository(MedicationRepository medicationRepository) {
+        this.medicationRepository = medicationRepository;
+    }
 
     @Mapping(source = "medicationId", target = "medication", qualifiedByName = "mapMedicationIdToMedication")
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "receiver", target = "receiver")
     public abstract OutboundTransaction toOutboundTransaction(OutboundTransactionDTO outboundTransactionDTO);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "medication.id", target = "medicationId")
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "receiver", target = "receiver")

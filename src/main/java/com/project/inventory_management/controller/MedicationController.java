@@ -3,7 +3,6 @@ package com.project.inventory_management.controller;
 import com.project.inventory_management.dto.FDADrugResponseDTO;
 import com.project.inventory_management.dto.MedicationRequestDTO;
 import com.project.inventory_management.entity.Medication;
-import com.project.inventory_management.exception.MedicationNotFoundException;
 import com.project.inventory_management.service.MedicationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +52,10 @@ public class MedicationController {
         return ResponseEntity.ok(medicationService.deleteMedication(id));
     }
 
-    @GetMapping("/medication-not-found")
-    public MedicationNotFoundException medicationNotFound() {
-        return new MedicationNotFoundException("Medication not found");
-    }
+//    @GetMapping("/medication-not-found")
+//    public MedicationNotFoundException medicationNotFound() {
+//        return new MedicationNotFoundException("Medication not found");
+//    }
 
     @GetMapping("/fetch-data/{drugName}")
     public ResponseEntity<FDADrugResponseDTO> fetchMedicationInfo(@PathVariable String drugName) {

@@ -2,7 +2,6 @@ package com.project.inventory_management.controller;
 
 import com.project.inventory_management.dto.InboundTransactionDTO;
 import com.project.inventory_management.entity.InboundTransaction;
-import com.project.inventory_management.mapper.InboundTransactionMapper;
 import com.project.inventory_management.service.InboundTransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,7 @@ public class InboundTransactionController {
     private final InboundTransactionService inboundTransactionService;
 
     @Autowired
-    public InboundTransactionController(InboundTransactionService inboundTransactionService,
-                                        InboundTransactionMapper inboundTransactionMapper) {
+    public InboundTransactionController(InboundTransactionService inboundTransactionService) {
         this.inboundTransactionService = inboundTransactionService;
     }
 
