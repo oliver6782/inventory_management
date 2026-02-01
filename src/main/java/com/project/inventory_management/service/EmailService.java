@@ -20,8 +20,12 @@ public class EmailService {
 //    private static final String EMAIL_TO = "xuoli@foxmail.com";
 
     @Autowired
-    public EmailService(JavaMailSender javaMailSender) {
+    public EmailService(@org.springframework.lang.Nullable JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
+    }
+
+    private boolean mailAvailable() {
+        return this.javaMailSender != null;
     }
 /*
 ** This method use simple email message which is plain text format
@@ -54,6 +58,11 @@ public class EmailService {
     // This method enables html format emails
     @Async
     public void sendEmail(String to, List<Medication> insufficientMedications) {
+        if (!mailAvailable()) {
+            log.warn("JavaMailSender not configured; skipping email send.");
+            return;
+        }
+
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper;
 

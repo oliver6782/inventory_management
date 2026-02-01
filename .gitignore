@@ -37,3 +37,13 @@ build/
 
 ### properties
 src/main/resources/application.properties
+
+# Local development artifacts
+*.log
+backend.log
+flask_run.log
+.DS_Store
+
+# Python virtualenv
+frontend/.venv/
+

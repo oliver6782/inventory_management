@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Medications</h2>
+    <a class="btn btn-primary" href="{{ url_for('new_medication') }}">+ Add medication</a>
+  </div>
+  <table class="table table-striped mt-3">
+    <thead><tr><th>ID</th><th>Name</th><th>Quantity</th><th>Type</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for m in meds %}
+        <tr>
+          <td>{{ m.id }}</td>
+          <td><a href="{{ url_for('medication_detail', med_id=m.id) }}">{{ m.name }}</a></td>
+          <td>{{ m.quantity }}</td>
+          <td>{{ m.type }}</td>
+          <td>
+            <form action="{{ url_for('medication_delete', med_id=m.id) }}" method="post" class="d-inline" onsubmit="return confirmDelete();">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <nav aria-label="pagination">
+    <ul class="pagination">
+      <li class="page-item {% if page <= 0 %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('index', page=page-1 if page>0 else 0, size=size) }}">Previous</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('index', page=page+1, size=size) }}">Next</a>
+      </li>
+    </ul>
+  </nav>
+{% endblock %}

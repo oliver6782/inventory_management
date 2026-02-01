@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>New Medication</h2>
+  <form method="post" class="mt-3">
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input class="form-control" type="text" name="name" required minlength="4" maxlength="50">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" name="description" required maxlength="5000"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Quantity</label>
+      <input class="form-control" type="number" name="quantity" min="1" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Type</label>
+      <select class="form-select" name="type" required>
+        <option value="PRES">Prescription (PRES)</option>
+        <option value="OTC">Over-the-counter (OTC)</option>
+        <option value="OTHER">Other / Supplement (OTHER)</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Create</button>
+  </form>
+{% endblock %}

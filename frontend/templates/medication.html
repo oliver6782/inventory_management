@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-8">
+      <h2>{{ med.name }} <small class="text-muted">ID: {{ med.id }}</small></h2>
+      <p><strong>Quantity:</strong> {{ med.quantity }}</p>
+      <p><strong>Type:</strong> {{ med.type }}</p>
+      <p>{{ med.description }}</p>
+
+      <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Inbound Transactions</span>
+          <form class="d-inline" method="post" action="{{ url_for('fetch_fda', med_id=med.id) }}">
+            <button class="btn btn-sm btn-outline-secondary">Fetch FDA Info</button>
+          </form>
+        </div>
+        <div class="card-body">
+          {% if inbound %}
+            <table class="table table-sm">
+              <thead><tr><th>Qty</th><th>Supplier</th><th>Date</th></tr></thead>
+              <tbody>
+                {% for t in inbound %}
+                  <tr><td>{{ t.quantity }}</td><td>{{ t.supplier }}</td><td>{{ t.receivedDate }}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="mb-0">No inbound transactions</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header">Outbound Transactions</div>
+        <div class="card-body">
+          {% if outbound %}
+            <table class="table table-sm">
+              <thead><tr><th>Qty</th><th>Receiver</th><th>Date</th></tr></thead>
+              <tbody>
+                {% for t in outbound %}
+                  <tr><td>{{ t.quantity }}</td><td>{{ t.receiver }}</td><td>{{ t.dispatchedDate }}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="mb-0">No outbound transactions</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if fda %}
+        <div class="card mb-3">
+          <div class="card-header">FDA Info</div>
+          <div class="card-body">
+            <pre style="white-space:pre-wrap;">{{ fda | tojson(indent=2) }}</pre>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-header">Add Inbound</div>
+        <div class="card-body">
+          <form method="post" action="{{ url_for('add_inbound', med_id=med.id) }}">
+            <div class="mb-2"><input class="form-control" type="number" name="quantity" min="1" required placeholder="Quantity"></div>
+            <div class="mb-2"><input class="form-control" type="text" name="supplier" required placeholder="Supplier"></div>
+            <button class="btn btn-primary">Add Inbound</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header">Add Outbound</div>
+        <div class="card-body">
+          <form method="post" action="{{ url_for('add_outbound', med_id=med.id) }}">
+            <div class="mb-2"><input class="form-control" type="number" name="quantity" min="1" required placeholder="Quantity"></div>
+            <div class="mb-2"><input class="form-control" type="text" name="receiver" required placeholder="Receiver"></div>
+            <button class="btn btn-primary">Add Outbound</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
