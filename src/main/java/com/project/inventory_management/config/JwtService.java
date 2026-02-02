@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.security.Key;
 import java.util.Date;
@@ -19,7 +20,8 @@ public class JwtService {
 
     // JWT requires 256-bit level
     // random key generator website: https://randomkeygen.com/
-    private static final String SECRET_KEY = "ywssvWmBzHFrw9gAcAqc9A62VWNSgKrfDVpuRTalk6yICU5oU8HfYQwHxDErszbo";
+    @Value("${jwt.secret:ywssvWmBzHFrw9gAcAqc9A62VWNSgKrfDVpuRTalk6yICU5oU8HfYQwHxDErszbo}")
+    private String SECRET_KEY;
     public String extractUsername(String token) {
         // subject should be username/email
         return extractClaim(token, Claims::getSubject);
